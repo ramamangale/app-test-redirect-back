@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>app-test-redirect-back</title>
+    <style>
+        .paramters {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        input[type="button"],
+        #add-row {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: beige;
+        }
+
+        .main-div {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <h1>App Test Redirect Back</h1>
+        <br />
+        <div>
+            <h4>Redirect URL</h4>
+            <br />
+            <input type="text" name="url" id="redirect-url" placeholder="Enter redirect URL endpoint" required>
+            <br />
+            <hr>
+            <button type="button" id="add-row">+</button>
+            <br />
+            <div id="dynamic-fields"></div>
+            <br />
+            <hr>
+            <input type="button" value="Redirect" id="redirect">
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const addRow = document.getElementById('add-row');
+            const redirect = document.getElementById('redirect');
+            const redirectUrl = document.getElementById('redirect-url');
+
+            addRow.addEventListener('click', () => {
+                const input = document.createElement('input');
+                const inputParam = document.createElement('input');
+                const mainDiv = document.createElement('div');
+                const deleteBtn = document.createElement('button');
+                const brT = document.createElement('br');
+                input.type = 'text';
+                input.name = 'params';
+                input.setAttribute('class', 'paramters');
+                input.placeholder = 'value';
+                input.required = true;
+
+                inputParam.type = 'text';
+                inputParam.name = 'parameter-name';
+                inputParam.placeholder = 'parameter name';
+                inputParam.setAttribute('class', 'parameter-name');
+                inputParam.required = true;
+
+                deleteBtn.type = 'button';
+                deleteBtn.innerHTML = '-';
+                deleteBtn.style.backgroundColor = 'red';
+
+                const uuid = Math.floor(Math.random() * 1000000);
+
+                deleteBtn.addEventListener('click', () => {
+                    mainDiv.remove();
+                    brT.remove();
+                });
+
+                mainDiv.setAttribute('class', 'main-div');
+                mainDiv.setAttribute('id', uuid);
+                mainDiv.appendChild(inputParam);
+                mainDiv.appendChild(input);
+                mainDiv.appendChild(deleteBtn);
+
+
+                document.getElementById('dynamic-fields').appendChild(mainDiv);
+                document.getElementById('dynamic-fields').appendChild(brT);
+            });
+
+            redirect.addEventListener('click', () => {
+                const params = [];
+                const url = redirectUrl.value;
+                if (url) {
+                    document.querySelectorAll('.main-div').forEach(el => {
+                        const name = el.querySelector('.parameter-name').value;
+                        const val = el.querySelector('.paramters').value;
+                        params.push({ [name]: val });
+                    });
+                }
+                if (params.length) {
+                    const r = params.map((param) => {
+                        return Object.keys(param).map((key) => {
+                            return `${key}=${param[key]}`;
+                        }).join('&');
+                    });
+                    window.location.href = `${url}?${r.join('&')}`;
+                } else {
+                    window.location.href = url;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
